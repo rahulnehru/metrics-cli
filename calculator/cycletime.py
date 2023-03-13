@@ -30,7 +30,17 @@ def _calculate_average_cycle_time(config, tickets):
             log.print_debug(f'\t\tTicket {ticket["key"]} took {cycle_time} days to complete')
     return total_cycle_time / len(tickets)
 
-def show_project_cycletimes(config: Config, jira_client: JiraClient):
+
+def _calculate_percentile_cycle_time(config, tickets, percentile):
+    cycle_times = []
+    for ticket in tickets:
+        cycle_time = _get_cycle_time(config.resolved_statuses, ticket)
+        cycle_times.append(cycle_time)
+    cycle_times.sort()
+    index = int(len(cycle_times) * percentile)
+    return cycle_times[index]
+
+def show_project_cycletimes(config: Config, jira_client: JiraClient, percentiles: bool):
     log.print_header(f'Cycletime report for the past {config.weeks} weeks')
     print('')
     for project in config.projects:
@@ -39,4 +49,8 @@ def show_project_cycletimes(config: Config, jira_client: JiraClient):
         tickets = jira_client.get_completed_tickets(config, project.jql)
         log.print_debug(f'\tTickets found: {len(tickets)}')
         log.print_info(f'\tAverage cycle time: {_calculate_average_cycle_time(config, tickets):.2f} days')
+        if percentiles:
+            log.print_info(f'\t50th percentile cycle time: {_calculate_percentile_cycle_time(config, tickets, 0.50):.2f} days')
+            log.print_info(f'\t75th percentile cycle time: {_calculate_percentile_cycle_time(config, tickets, 0.75):.2f} days')
+            log.print_info(f'\t85th percentile cycle time: {_calculate_percentile_cycle_time(config, tickets, 0.85):.2f} days')
         print('')

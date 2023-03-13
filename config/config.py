@@ -25,12 +25,15 @@ class Config:
         for project in projects_dict:
             projects.append(Project(project['team'], project['jql']))
         return projects
+    
+    def _get_statuses_as_string(self, statuses: list[str]):
+        return f'({",".join(statuses)})'
 
     def get_resolved_statuses_as_string(self):
-        return f'({",".join(self.resolved_statuses)})'
+        return self._get_statuses_as_string(self.resolved_statuses)
     
     def get_backlog_statuses_as_string(self):
-        return f'({",".join(self.backlog_statuses)})'
+        return self._get_statuses_as_string(self.backlog_statuses)
     
     def get_discarded_statuses_as_string(self):
-        return f'({",".join(self.discarded_statuses)})'
+        return self._get_statuses_as_string(self.discarded_statuses)

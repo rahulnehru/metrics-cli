@@ -50,3 +50,7 @@ class JiraClient:
     def get_discarded_tickets(self, config: Config, jql: str) -> list[dict]:
         discarded_ticket_jql = f'{jql} AND status changed to {config.get_discarded_statuses_as_string()} AFTER -{config.weeks}w'
         return self._get_tickets(config, discarded_ticket_jql)
+    
+    def get_raised_tickets(self, config: Config, jql: str) -> list[dict]:
+        raised_ticket_jql = f'{jql} AND status changed from {config.get_backlog_statuses_as_string()} AFTER -{config.weeks}w'
+        return self._get_tickets(config, raised_ticket_jql)
