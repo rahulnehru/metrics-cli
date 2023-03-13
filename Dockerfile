@@ -8,5 +8,6 @@ COPY README.md README.md
 COPY LICENSE LICENSE
 COPY install.sh install.sh
 RUN ./install.sh
+USER nobody
 
 ENTRYPOINT [ "metrics" ]
