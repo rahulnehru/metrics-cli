@@ -1,7 +1,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
-from config.config import Config
-import printer.log as log
+from ..config.config import Config
+from ..printer.log import print_error
 import multiprocessing
 
 class JiraClient:
@@ -25,8 +25,8 @@ class JiraClient:
         }
         response = requests.get(self.base_url, auth=HTTPBasicAuth(self.username, self.password), params=jira_data, stream=True)
         if response.status_code != 200:
-            log.print_error(f'Error: {response.status_code}')
-            log.print_error(response.text)
+            print_error(f'Error: {response.status_code}')
+            print_error(response.text)
             exit(-1)
         return response.json()    
     

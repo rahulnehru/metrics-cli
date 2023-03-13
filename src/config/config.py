@@ -1,5 +1,5 @@
 import yaml
-from config.project import Project
+from .project import Project
 
 class Config:
     jira_url: str

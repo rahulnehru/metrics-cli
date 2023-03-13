@@ -1,8 +1,8 @@
 import datetime
-from config.config import Config
-from config.project import Project
-import printer.log as log
-from client.jira_client import JiraClient
+from ..config.config import Config
+from ..config.project import Project
+from ..printer.log import print_info, print_debug, print_warning, print_header
+from ..client.jira_client import JiraClient
 
 def _get_number_of_working_days_in_past_weeks(config: Config) -> int:
     today = datetime.date.today()
@@ -15,11 +15,11 @@ def _get_number_of_working_days_in_past_weeks(config: Config) -> int:
     return number_of_working_days
 
 def show_project_rates(config: Config, jira_client: JiraClient):
-    log.print_header(f'Entry/departure report for the past {config.weeks} weeks')
-    print('')
+    print_header(f'Entry/departure report for the past {config.weeks} weeks')
+    print_debug('')
     for project in config.projects:
-        log.print_info(f'Getting tickets for {project.team}')
-        log.print_debug(f'\tJQL: {project.jql}')
+        print_info(f'Getting tickets for {project.team}')
+        print_debug(f'\tJQL: {project.jql}')
         tickets_raised = len(jira_client.get_raised_tickets(config, project.jql))
         tickets_completed = len(jira_client.get_completed_tickets(config, project.jql))
         tickets_discarded = len(jira_client.get_discarded_tickets(config, project.jql))
@@ -28,11 +28,11 @@ def show_project_rates(config: Config, jira_client: JiraClient):
         tickets_raised_per_day = tickets_raised / number_of_working_days
         tickets_completed_per_day = total_completed / number_of_working_days
         if config.debug_enabled:
-            log.print_debug(f'\tTickets raised: {tickets_raised}')
-            log.print_debug(f'\tTickets completed or closed: {total_completed}')
-            log.print_debug(f'\tNumber of working days: {number_of_working_days}')
-        log.print_info(f'\tEntry rate: {tickets_raised_per_day:.2f}')
-        log.print_info(f'\tExit rate: {tickets_completed_per_day:.2f}')
+            print_debug(f'\tTickets raised: {tickets_raised}')
+            print_debug(f'\tTickets completed or closed: {total_completed}')
+            print_debug(f'\tNumber of working days: {number_of_working_days}')
+        print_info(f'\tEntry rate: {tickets_raised_per_day:.2f}')
+        print_info(f'\tExit rate: {tickets_completed_per_day:.2f}')
         if tickets_raised_per_day > tickets_completed_per_day:
-            log.print_warning(f'\t\tWIP is increasing')
-        print('')
+            print_warning(f'\t\tWIP is increasing')
+        print_debug('')

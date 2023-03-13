@@ -1,7 +1,7 @@
 private/*
 */__pycache__/*
-.egg-info/*
-.eggs/*
+*.egg-info/*
+*.eggs/*
 build/*
 dist/*
 docs/_build/*
