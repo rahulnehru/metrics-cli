@@ -4,9 +4,40 @@ This tool can be used to get Agile metrics for a limited period of time for your
 
 ## Running locally
 This tool can be run natively by using the install script, or using Docker.
-### Running using Docker
 
+This tool provides a CLI for generating reports on your Jira metrics. 
+
+```bash
+metrics
+Usage: metrics [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  all         Generate all reports for projects
+  cycletime   Generate cycle time report for projects
+  rates       Generate entry and departure rate for projects
+  throughput  Generate throughput report for projects
+  wastage     Wastage report for projects
+  wip         Generate work-in-progress report for projects
+```
+
+Example usage:
+
+```bash
+metrics cycletime <JIRA_USERNAME> <JIRA_PASSWORD> config.yaml 
+```
+
+### Running using Docker
+You can install the tool using a Docker container by running `docker build -t metrics .`.
+
+You can then run the tool by running `docker run -v $(pwd)/config.yaml:/config.yaml metrics` from the command line.
 ### Running locally
+If using OSX, you can run the `install.sh` script locally on your machine. This will install the tool into your local `bin` directory.
+This tool requires Python 3.10 or higher to be installed on your machine.
+
+You can then run the tool by running `metrics` from the command line.
 
 ## Configuration
 You must specify a YAML configuration file which contains the details of your Jira instance and the projects you are interested in:
