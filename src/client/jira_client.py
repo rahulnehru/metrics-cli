@@ -10,7 +10,7 @@ class JiraClient:
     base_url: str
     session: requests.Session
 
-    def __init__(self, username: str, password: str, base_url: str):
+    def __init__(self, username: str, password: str, base_url: str) -> None:
         self.username = username
         self.password = password
         self.base_url = base_url

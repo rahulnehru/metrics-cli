@@ -3,10 +3,10 @@ from ..config.config import Config
 from ..printer.log import print_debug, print_header, print_info
 from ..client.jira_client import JiraClient
 
-def _get_creation_date(ticket):
+def _get_creation_date(ticket) -> datetime:
     return datetime.datetime.strptime(ticket["fields"]["created"], "%Y-%m-%dT%H:%M:%S.%f%z")
 
-def _get_resolution_date(resolved_statuses, ticket):
+def _get_resolution_date(resolved_statuses, ticket) -> datetime.datetime:
     if ticket["fields"]["resolutiondate"] and ticket["fields"]["resolutiondate"] != "null" and ticket["fields"]["resolutiondate"] != "None":
         return datetime.datetime.strptime(ticket["fields"]["resolutiondate"], "%Y-%m-%dT%H:%M:%S.%f%z")
     transitions = ticket["changelog"]["histories"]
@@ -17,10 +17,10 @@ def _get_resolution_date(resolved_statuses, ticket):
                     return datetime.datetime.strptime(transition["created"], "%Y-%m-%dT%H:%M:%S.%f%z")
     
 
-def _get_cycle_time(resolved_statuses, ticket):
+def _get_cycle_time(resolved_statuses, ticket) -> float:
     return (_get_resolution_date(resolved_statuses, ticket) - _get_creation_date(ticket)).days
 
-def _calculate_average_cycle_time(config, tickets):
+def _calculate_average_cycle_time(config, tickets) -> float:
     total_cycle_time = 0
     for ticket in tickets:
         cycle_time = _get_cycle_time(config.resolved_statuses, ticket)
@@ -30,7 +30,7 @@ def _calculate_average_cycle_time(config, tickets):
     return total_cycle_time / len(tickets)
 
 
-def _calculate_percentile_cycle_time(config, tickets, percentile):
+def _calculate_percentile_cycle_time(config, tickets, percentile) -> float:
     cycle_times = []
     for ticket in tickets:
         cycle_time = _get_cycle_time(config.resolved_statuses, ticket)
@@ -39,7 +39,7 @@ def _calculate_percentile_cycle_time(config, tickets, percentile):
     index = int(len(cycle_times) * percentile)
     return cycle_times[index]
 
-def show_project_cycletimes(config: Config, jira_client: JiraClient, percentiles: bool):
+def show_project_cycletimes(config: Config, jira_client: JiraClient, percentiles: bool) -> None:
     print_header(f'Cycletime report for the past {config.weeks} weeks')
     print_debug('')
     for project in config.projects:

@@ -14,7 +14,7 @@ def _get_number_of_working_days_in_past_weeks(config: Config) -> int:
             number_of_working_days += 1
     return number_of_working_days
 
-def show_project_rates(config: Config, jira_client: JiraClient):
+def show_project_rates(config: Config, jira_client: JiraClient) -> None:
     print_header(f'Entry/departure report for the past {config.weeks} weeks')
     print_debug('')
     for project in config.projects:

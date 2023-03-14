@@ -11,7 +11,7 @@ import hvac
 client = hvac.Client()
 
 @click.group()
-def cli():
+def cli() -> None:
     pass
 
 @click.command(help = "Generate cycle time report for projects")
@@ -20,7 +20,7 @@ def cli():
 @click.argument("config", required=True, type=str)
 @click.option("--weeks", default=3, help="Number of weeks to look back")
 @click.option("--percentiles", default=False, help="Include percentiles in report")
-def cycletime(config, username, password, weeks, percentiles):
+def cycletime(config, username, password, weeks, percentiles) -> None:
     config = Config(config, weeks)
     jira_client = JiraClient(username, password, config.jira_url)
     show_project_cycletimes(config, jira_client, percentiles)
@@ -30,7 +30,7 @@ def cycletime(config, username, password, weeks, percentiles):
 @click.argument("password", required=True, type=str)
 @click.argument("config", required=True, type=str)
 @click.option("--weeks", default=3, help="Number of weeks to look back")
-def throughput(config, username, password, weeks):
+def throughput(config, username, password, weeks) -> None:
     config = Config(config, weeks)
     jira_client = JiraClient(username, password, config.jira_url)
     show_project_throughputs(config, jira_client)  
@@ -39,7 +39,7 @@ def throughput(config, username, password, weeks):
 @click.argument("username", required=True, type=str)
 @click.argument("password", required=True, type=str)
 @click.argument("config", required=True, type=str)
-def wip(config, username, password):
+def wip(config, username, password) -> None:
     config = Config(config, None)
     jira_client = JiraClient(username, password, config.jira_url)
     show_project_wips(config, jira_client)    
@@ -49,7 +49,7 @@ def wip(config, username, password):
 @click.argument("password", required=True, type=str)
 @click.argument("config", required=True, type=str)
 @click.option("--weeks", default=3, help="Number of weeks to look back")
-def wastage(config, username, password, weeks):
+def wastage(config, username, password, weeks) -> None:
     config = Config(config, weeks)
     jira_client = JiraClient(username, password, config.jira_url)
     show_project_wastages(config, jira_client)
@@ -59,7 +59,7 @@ def wastage(config, username, password, weeks):
 @click.argument("password", required=True, type=str)
 @click.argument("config", required=True, type=str)
 @click.option("--weeks", default=3, help="Number of weeks to look back")
-def rates(config, username, password, weeks):
+def rates(config, username, password, weeks) -> None:
     config = Config(config, weeks)
     jira_client = JiraClient(username, password, config.jira_url)
     rates.show_project_rates(config, jira_client)    
@@ -69,7 +69,7 @@ def rates(config, username, password, weeks):
 @click.argument("password", required=True, type=str)
 @click.argument("config", required=True, type=str)
 @click.option("--weeks", default=3, help="Number of weeks to look back")
-def all(config, username, password, weeks):
+def all(config, username, password, weeks) -> None:
     config = Config(config, weeks)
     jira_client = JiraClient(username, password, config.jira_url)
     show_project_cycletimes(config, jira_client)
@@ -78,7 +78,7 @@ def all(config, username, password, weeks):
     show_project_wips(config, jira_client)       
     rates.show_project_rates(config, jira_client) 
 
-def main():
+def main() -> None:
     cli.add_command(cycletime)
     cli.add_command(throughput)
     cli.add_command(wip)

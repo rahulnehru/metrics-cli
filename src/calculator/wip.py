@@ -12,7 +12,7 @@ def group_tickets_by_status(tickets: list[dict]) -> dict[str, int]:
     return grouped_tickets
 
     
-def show_project_wips(config: Config, jira_client: JiraClient):
+def show_project_wips(config: Config, jira_client: JiraClient) -> None:
     print_header(f'Work in Progress report')
     print_debug('')
     for project in config.projects:
