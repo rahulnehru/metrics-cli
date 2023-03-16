@@ -1,5 +1,4 @@
 class Project:
-    
     team: str
     jql: str
 

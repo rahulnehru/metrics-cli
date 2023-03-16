@@ -1,0 +1,18 @@
+jira:
+  url: "https://jira.com/rest/api/2/search"
+  statuses:
+    resolved:
+      - Done
+    backlog:
+      - Backlog
+      - New
+    discarded:
+      - Closed
+
+debug_enabled: false
+
+projects:
+  - team: "Team 1"
+    jql: 'project = PROJ1 and assignedTeam = "Team 1"'
+  - team: "Team 2"
+    jql: 'project = PROJ2 and assignedTeam = "Team 2"'

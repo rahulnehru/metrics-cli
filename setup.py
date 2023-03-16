@@ -17,9 +17,10 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
     ],
     include_package_data=True,
+    packages=setuptools.find_packages(exclude=["tests"]),
     install_requires=[
         "click", "hvac", "requests", "pyyaml"
     ],
-    packages=setuptools.find_packages(),
+    test_suite="tests",
     entry_points={"console_scripts": ["metrics=src.metrics:main"]},
 )
