@@ -20,6 +20,7 @@ class Config:
     discarded_statuses: list[str]
     projects: list[Project]
     weeks: int
+    debug_enabled: bool
 
     def __init__(self, config_file: str, weeks: int | None) -> None:
         with open(config_file) as f:
@@ -40,3 +41,33 @@ class Config:
 
     def get_discarded_statuses_as_string(self) -> str:
         return _get_statuses_as_string(self.discarded_statuses)
+
+    def __str__(self):
+        return f'Jira URL: {self.jira_url}\n' \
+               f'Resolved statuses: {self.resolved_statuses}\n' \
+               f'Backlog statuses: {self.backlog_statuses}\n' \
+               f'Discarded statuses: {self.discarded_statuses}\n' \
+               f'Projects: {self.projects}\n' \
+               f'Weeks: {self.weeks}\n' \
+               f'Debug enabled: {self.debug_enabled}'
+
+    @staticmethod
+    def get_yaml_template() -> str:
+        config = {
+            'jira': {
+                'url': 'https://jira.example.com',
+                'statuses': {
+                    'resolved': ['Done', 'Closed'],
+                    'backlog': ['Backlog'],
+                    'discarded': ['Discarded']
+                }
+            },
+            'projects': [
+                {
+                    'team': 'Team 1',
+                    'jql': 'project = PROJ1'
+                }
+            ],
+            'debug_enabled': False
+        }
+        return config

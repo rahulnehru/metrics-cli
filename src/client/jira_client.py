@@ -1,21 +1,45 @@
 import requests
+from requests import Response
 from requests.auth import HTTPBasicAuth
 from ..config.config import Config
 from ..printer.log import print_error
 import multiprocessing
 
 
+def wrap_connection_exception(func, host):
+    try:
+        return func()
+    except requests.exceptions.ConnectionError:
+        print_error(f"Could not connect to host {host}")
+        exit(-1)
+
+
+def handle_error(response: Response):
+    if response.status_code > 299:
+        print_error(f"Error: {response.status_code}")
+        print_error(response.text)
+        exit(-1)
+
+
 class JiraClient:
-    username: str
-    password: str
+    auth_token: str
     base_url: str
     session: requests.Session
 
-    def __init__(self, username: str, password: str, base_url: str) -> None:
-        self.username = username
-        self.password = password
+    def __init__(self, auth_token: str, base_url: str) -> None:
+        self.auth_token = auth_token
         self.base_url = base_url
         self.session = requests.Session()
+
+    @staticmethod
+    def auth(base_url, username, password) -> None:
+        content_type_header = {'Content-Type': 'application/json'}
+        response = wrap_connection_exception(requests.post(f'{base_url}/rest/pat/latest/tokens',
+                                                           headers=content_type_header,
+                                                           data='{"name": "metrics-cli", "expirationDuration": 90}',
+                                                           auth=HTTPBasicAuth(username, password)), base_url)
+        handle_error(response)
+        return response.json()
 
     def _run_jira_query(self, jql: str, start_at: int) -> list[dict]:
         jira_data = {
@@ -24,16 +48,16 @@ class JiraClient:
             "maxResults": 50,
             "expand": "changelog"
         }
-        response = requests.get(self.base_url, auth=HTTPBasicAuth(self.username, self.password), params=jira_data,
-                                stream=True)
-        if response.status_code != 200:
-            print_error(f'Error: {response.status_code}')
-            print_error(response.text)
-            exit(-1)
+        header = {
+            'Authorization': f'Bearer {self.auth_token}'
+        }
+        response = wrap_connection_exception(lambda: self.session.get(f'{self.base_url}/rest/api/2/search',
+                                                                      headers=header, params=jira_data,
+                                                                      stream=True), self.base_url)
+        handle_error(response)
         return response.json()
 
     def _get_tickets(self, jql: str) -> list[dict]:
-        tickets = []
         page = 0
         total_matches = self._run_jira_query(jql, page)['total']
         pages = total_matches // 50

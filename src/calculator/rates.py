@@ -4,7 +4,7 @@ from ..printer.log import print_info, print_debug, print_warning, print_header
 from ..client.jira_client import JiraClient
 
 
-def _get_number_of_working_days_in_past_weeks(config: Config) -> int:
+def get_number_of_working_days_in_past_weeks(config: Config) -> int:
     today = datetime.date.today()
     start_date = today - datetime.timedelta(weeks=config.weeks)
     number_of_working_days = 0
@@ -15,7 +15,7 @@ def _get_number_of_working_days_in_past_weeks(config: Config) -> int:
     return number_of_working_days
 
 
-def _calculate_rate(tickets: int, number_of_working_days: int) -> float:
+def calculate_rate(tickets: int, number_of_working_days: int) -> float:
     if number_of_working_days == 0:
         raise ValueError('No working days found')
     return tickets / number_of_working_days
@@ -31,9 +31,9 @@ def show_project_rates(config: Config, jira_client: JiraClient) -> None:
         tickets_completed = len(jira_client.get_completed_tickets(config, project.jql))
         tickets_discarded = len(jira_client.get_discarded_tickets(config, project.jql))
         total_completed = tickets_completed + tickets_discarded
-        number_of_working_days = _get_number_of_working_days_in_past_weeks(config)
-        tickets_raised_per_day = _calculate_rate(tickets_raised, number_of_working_days)
-        tickets_completed_per_day = _calculate_rate(total_completed, number_of_working_days)
+        number_of_working_days = get_number_of_working_days_in_past_weeks(config)
+        tickets_raised_per_day = calculate_rate(tickets_raised, number_of_working_days)
+        tickets_completed_per_day = calculate_rate(total_completed, number_of_working_days)
         if config.debug_enabled:
             print_debug(f'\tTickets raised: {tickets_raised}')
             print_debug(f'\tTickets completed or closed: {total_completed}')

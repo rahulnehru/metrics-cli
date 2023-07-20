@@ -3,7 +3,7 @@
 This tool can be used to get Agile metrics for a limited period of time for your teams from Jira. This currently only supports the v2 Jira REST API. 
 
 ## Running locally
-This tool can be run natively by using the install script, or using Docker.
+This tool can be run natively by using the `install.sh` script, or using Docker.
 
 This tool provides a CLI for generating reports on your Jira metrics. 
 

@@ -1,29 +1,29 @@
 import unittest
 import datetime
 
-from src.calculator.cycletime import _get_creation_date, _get_resolution_date, _get_cycle_time, \
-    _calculate_average_cycle_time, _calculate_percentile_cycle_time
+from src.calculator.cycletime import get_creation_date, get_resolution_date, get_cycle_time, \
+    calculate_average_cycle_time, calculate_percentile_cycle_time
 
 
 class TestCycletime(unittest.TestCase):
     def test_get_creation_date_returns_value_from_ticket(self):
         ticket = {'fields': {'created': '2018-01-01T00:00:00.000+0000'}}
-        actual = _get_creation_date(ticket)
+        actual = get_creation_date(ticket)
         expected = datetime.datetime.strptime('2018-01-01T00:00:00.000+0000', "%Y-%m-%dT%H:%M:%S.%f%z")
         self.assertEqual(actual, expected)
 
     def test_get_creation_date_raises_value_error_when_ticket_has_no_created_field(self):
         ticket = {'fields': {}}
-        self.assertRaises(ValueError, _get_creation_date, ticket)
+        self.assertRaises(ValueError, get_creation_date, ticket)
 
     def test_get_creation_date_raises_value_error_when_incorrect_format(self):
         ticket = {'fields': {'created': '2018-01-01'}}
-        self.assertRaises(ValueError, _get_creation_date, ticket)
+        self.assertRaises(ValueError, get_creation_date, ticket)
 
     def test__get_resolution_date_returns_value_from_ticket_when_ticket_has_resolution_date(self):
         ticket = {'fields': {'resolutiondate': '2018-01-01T00:00:00.000+0000'}}
         resolved_status = []
-        actual = _get_resolution_date(resolved_status, ticket)
+        actual = get_resolution_date(resolved_status, ticket)
         expected = datetime.datetime.strptime('2018-01-01T00:00:00.000+0000', "%Y-%m-%dT%H:%M:%S.%f%z")
         self.assertEqual(actual, expected)
 
@@ -44,7 +44,7 @@ class TestCycletime(unittest.TestCase):
                   }
                   }
         resolved_status = ['Done']
-        actual = _get_resolution_date(resolved_status, ticket)
+        actual = get_resolution_date(resolved_status, ticket)
         expected = datetime.datetime.strptime('2018-01-01T00:00:00.000+0000', "%Y-%m-%dT%H:%M:%S.%f%z")
         self.assertEqual(actual, expected)
 
@@ -67,7 +67,7 @@ class TestCycletime(unittest.TestCase):
             }
         }
         resolved_status = ['Done']
-        self.assertRaises(Warning, _get_resolution_date, resolved_status, ticket)
+        self.assertRaises(Warning, get_resolution_date, resolved_status, ticket)
 
     def test_get_cycle_time_returns_correct_number_of_days_for_ticket_with_resolution_date(self):
         resolved_statuses = ['Done']
@@ -78,7 +78,7 @@ class TestCycletime(unittest.TestCase):
                 'created': '2018-01-01T00:00:00.000+0000'
             }
         }
-        actual = _get_cycle_time(resolved_statuses, ticket)
+        actual = get_cycle_time(resolved_statuses, ticket)
         expected = 3
         self.assertEqual(actual, expected)
 
@@ -104,7 +104,7 @@ class TestCycletime(unittest.TestCase):
                 ]
             }
         }
-        actual = _get_cycle_time(resolved_statuses, ticket)
+        actual = get_cycle_time(resolved_statuses, ticket)
         expected = 3
         self.assertEqual(actual, expected)
 
@@ -134,14 +134,14 @@ class TestCycletime(unittest.TestCase):
         ]
         resolved_statuses = ['Done']
 
-        actual = _calculate_average_cycle_time(resolved_statuses, True, tickets)
+        actual = calculate_average_cycle_time(resolved_statuses, True, tickets)
         expected = 4
         self.assertEqual(actual, expected)
 
     def test_calculate_average_cycle_time_raises_warning_when_tickets_length_is_zero(self):
         tickets = []
         resolved_statuses = ['Done']
-        self.assertRaises(Warning, _calculate_average_cycle_time, resolved_statuses, True, tickets)
+        self.assertRaises(Warning, calculate_average_cycle_time, resolved_statuses, True, tickets)
 
     def test_calculate_percentile_cycle_time_returns_correct_percentile(self):
         tickets = [
@@ -168,9 +168,9 @@ class TestCycletime(unittest.TestCase):
             }
         ]
         resolved_statuses = ['Done']
-        self.assertEqual(_calculate_percentile_cycle_time(resolved_statuses, tickets, 0.5), 2)
-        self.assertEqual(_calculate_percentile_cycle_time(resolved_statuses, tickets, 0.75), 8)
-        self.assertEqual(_calculate_percentile_cycle_time(resolved_statuses, tickets, 0.85), 8)
+        self.assertEqual(calculate_percentile_cycle_time(resolved_statuses, tickets, 0.5), 2)
+        self.assertEqual(calculate_percentile_cycle_time(resolved_statuses, tickets, 0.75), 8)
+        self.assertEqual(calculate_percentile_cycle_time(resolved_statuses, tickets, 0.85), 8)
 
 
 if __name__ == '__main__':
