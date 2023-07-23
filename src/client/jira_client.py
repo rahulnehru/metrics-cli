@@ -6,9 +6,9 @@ from ..printer.log import print_error
 import multiprocessing
 
 
-def wrap_connection_exception(func, host):
+def wrap_connection_exception(f, host):
     try:
-        return func()
+        return f()
     except requests.exceptions.ConnectionError:
         print_error(f"Could not connect to host {host}")
         exit(-1)
@@ -16,7 +16,7 @@ def wrap_connection_exception(func, host):
 
 def handle_error(response: Response):
     if response.status_code > 299:
-        print_error(f"Error: {response.status_code}")
+        print_error(f"Could not execute request: {response.status_code}")
         print_error(response.text)
         exit(-1)
 
@@ -32,25 +32,23 @@ class JiraClient:
         self.session = requests.Session()
 
     @staticmethod
-    def auth(base_url, username, password) -> None:
+    def auth(base_url, username, password) -> dict:
         content_type_header = {'Content-Type': 'application/json'}
-        response = wrap_connection_exception(requests.post(f'{base_url}/rest/pat/latest/tokens',
-                                                           headers=content_type_header,
-                                                           data='{"name": "metrics-cli", "expirationDuration": 90}',
-                                                           auth=HTTPBasicAuth(username, password)), base_url)
+        response = wrap_connection_exception(lambda: requests.post(f'{base_url}/rest/pat/latest/tokens',
+                                                                   headers=content_type_header,
+                                                                   data='{"name": "metrics", "expirationDuration": 90}',
+                                                                   auth=HTTPBasicAuth(username, password)), base_url)
         handle_error(response)
         return response.json()
 
-    def _run_jira_query(self, jql: str, start_at: int) -> list[dict]:
+    def _run_jira_query(self, jql: str, start_at: int) -> dict:
         jira_data = {
             "jql": jql,
             "startAt": start_at,
             "maxResults": 50,
             "expand": "changelog"
         }
-        header = {
-            'Authorization': f'Bearer {self.auth_token}'
-        }
+        header = {'Authorization': f'Bearer {self.auth_token}'}
         response = wrap_connection_exception(lambda: self.session.get(f'{self.base_url}/rest/api/2/search',
                                                                       headers=header, params=jira_data,
                                                                       stream=True), self.base_url)

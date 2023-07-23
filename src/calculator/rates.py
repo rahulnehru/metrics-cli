@@ -27,10 +27,9 @@ def show_project_rates(config: Config, jira_client: JiraClient) -> None:
     for project in config.projects:
         print_info(f'Getting tickets for {project.team}')
         print_debug(f'\tJQL: {project.jql}')
+        total_completed = len(jira_client.get_completed_tickets(config, project.jql)) + \
+                          len(jira_client.get_discarded_tickets(config, project.jql))
         tickets_raised = len(jira_client.get_raised_tickets(config, project.jql))
-        tickets_completed = len(jira_client.get_completed_tickets(config, project.jql))
-        tickets_discarded = len(jira_client.get_discarded_tickets(config, project.jql))
-        total_completed = tickets_completed + tickets_discarded
         number_of_working_days = get_number_of_working_days_in_past_weeks(config)
         tickets_raised_per_day = calculate_rate(tickets_raised, number_of_working_days)
         tickets_completed_per_day = calculate_rate(total_completed, number_of_working_days)

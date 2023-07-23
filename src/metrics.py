@@ -1,13 +1,11 @@
-import sys
 from pathlib import Path
-
 from .client.jira_client import JiraClient
 from .config.config import Config
 from .calculator.cycletime import show_project_cycletimes
 from .calculator.throughput import show_project_throughputs
 from .calculator.wastage import show_project_wastages
 from .calculator.rates import show_project_rates
-from .calculator.wip import show_project_wips
+from .calculator.wip import show_project_wip
 from .auth.auth_config import append_token_to_auth_server_file, read_token_from_yaml_file
 from .printer.log import print_error, print_info
 import click
@@ -49,8 +47,12 @@ def create_default_files() -> None:
             yaml.dump(Config.get_yaml_template(), f)
 
 
-def read_authentication_token(jira_url) -> str | None:
-    return read_token_from_yaml_file(jira_url, _auth_filename)
+def read_authentication_token(jira_url) -> str:
+    auth_token = read_token_from_yaml_file(jira_url, _auth_filename)
+    if auth_token is None:
+        print_error(f"No authentication token found for {jira_url}. Run 'metrics auth' to authenticate.")
+        exit(-1)
+    return auth_token
 
 
 @click.command(help="Authenticate with Jira")
@@ -58,6 +60,7 @@ def read_authentication_token(jira_url) -> str | None:
 @click.option("--password", prompt=True, required=True, type=str, hide_input=True)
 @click.argument("jira-url", required=True, type=str, default=lambda: read_default_config_file().jira_url)
 def auth(username, password, jira_url) -> None:
+    print_info(f"Authenticating with {jira_url}")
     token = JiraClient.auth(jira_url, username, password)['rawToken']
     append_token_to_auth_server_file(f'{_default_directory}/servers.yaml', jira_url, token)
     print_info('Authentication successful!')
@@ -90,7 +93,7 @@ def wip(config) -> None:
     config = Config(config, None)
     auth_token = read_authentication_token(config.jira_url)
     jira_client = JiraClient(auth_token, config.jira_url)
-    show_project_wips(config, jira_client)
+    show_project_wip(config, jira_client)
 
 
 @click.command(help="Wastage report for projects")
@@ -123,7 +126,7 @@ def all(config, weeks) -> None:
     show_project_cycletimes(config, jira_client)
     show_project_throughputs(config, jira_client)
     show_project_wastages(config, jira_client)
-    show_project_wips(config, jira_client)
+    show_project_wip(config, jira_client)
     rates.show_project_rates(config, jira_client)
 
 
