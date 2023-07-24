@@ -69,12 +69,11 @@ def auth(username, password, jira_url) -> None:
 @click.command(help="Generate cycle time report for projects")
 @click.argument("config", required=True, type=str, default=_config_filename)
 @click.option("--weeks", default=3, help="Number of weeks to look back")
-@click.option("--percentiles", default=False, help="Include percentiles in report")
-def cycletime(config, weeks, percentiles) -> None:
+def cycletime(config, weeks) -> None:
     config = Config(config, weeks)
     auth_token = read_authentication_token(config.jira_url)
     jira_client = JiraClient(auth_token, config.jira_url)
-    show_project_cycletimes(config, jira_client, percentiles)
+    show_project_cycletimes(config, jira_client)
 
 
 @click.command(help="Generate throughput report for projects")

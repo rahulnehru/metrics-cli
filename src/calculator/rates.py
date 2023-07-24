@@ -1,6 +1,6 @@
 import datetime
 from ..config.config import Config
-from ..printer.log import print_info, print_debug, print_warning, print_header
+from ..printer.log import print_info, print_debug, print_warning, print_header, br
 from ..client.jira_client import JiraClient
 
 
@@ -23,10 +23,11 @@ def calculate_rate(tickets: int, number_of_working_days: int) -> float:
 
 def show_project_rates(config: Config, jira_client: JiraClient) -> None:
     print_header(f'Entry/departure report for the past {config.weeks} weeks')
-    print_debug('')
+    br()
     for project in config.projects:
         print_info(f'Getting tickets for {project.team}')
-        print_debug(f'\tJQL: {project.jql}')
+        if config.debug_enabled:
+            print_debug(f'\tJQL: {project.jql}')
         total_completed = len(jira_client.get_completed_tickets(config, project.jql)) + \
                           len(jira_client.get_discarded_tickets(config, project.jql))
         tickets_raised = len(jira_client.get_raised_tickets(config, project.jql))
@@ -41,4 +42,5 @@ def show_project_rates(config: Config, jira_client: JiraClient) -> None:
         print_info(f'\tExit rate: {tickets_completed_per_day:.2f}')
         if tickets_raised_per_day > tickets_completed_per_day:
             print_warning(f'\t\tWIP is increasing')
-        print_debug('')
+    br()
+

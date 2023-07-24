@@ -2,7 +2,7 @@ import unittest
 import datetime
 
 from src.calculator.cycletime import get_creation_date, get_resolution_date, get_cycle_time, \
-    calculate_average_cycle_time, calculate_percentile_cycle_time
+    calculate_ave_cycletime, calculate_percentile_cycle_time
 
 
 class TestCycletime(unittest.TestCase):
@@ -134,14 +134,14 @@ class TestCycletime(unittest.TestCase):
         ]
         resolved_statuses = ['Done']
 
-        actual = calculate_average_cycle_time(resolved_statuses, True, tickets)
+        actual = calculate_ave_cycletime(resolved_statuses, True, tickets)
         expected = 4
         self.assertEqual(actual, expected)
 
     def test_calculate_average_cycle_time_raises_warning_when_tickets_length_is_zero(self):
         tickets = []
         resolved_statuses = ['Done']
-        self.assertRaises(Warning, calculate_average_cycle_time, resolved_statuses, True, tickets)
+        self.assertRaises(Warning, calculate_ave_cycletime, resolved_statuses, True, tickets)
 
     def test_calculate_percentile_cycle_time_returns_correct_percentile(self):
         tickets = [

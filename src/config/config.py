@@ -21,6 +21,7 @@ class Config:
     projects: list[Project]
     weeks: int
     debug_enabled: bool
+    cycletime_percentiles: list[float]
 
     def __init__(self, config_file: str, weeks: int | None) -> None:
         with open(config_file) as f:
@@ -32,6 +33,7 @@ class Config:
             self.projects = _map_to_projects(config['projects'])
             self.debug_enabled = config['debug_enabled']
             self.weeks = weeks
+            self.cycletime_percentiles = config['cycletime_percentiles']
 
     def get_resolved_statuses_as_string(self) -> str:
         return _get_statuses_as_string(self.resolved_statuses)
@@ -49,7 +51,8 @@ class Config:
                f'Discarded statuses: {self.discarded_statuses}\n' \
                f'Projects: {self.projects}\n' \
                f'Weeks: {self.weeks}\n' \
-               f'Debug enabled: {self.debug_enabled}'
+               f'Debug enabled: {self.debug_enabled}\n' \
+               f'Cycletime percentiles: {self.cycletime_percentiles}'
 
     @staticmethod
     def get_yaml_template() -> str:
@@ -68,6 +71,7 @@ class Config:
                     'jql': 'project = PROJ1'
                 }
             ],
-            'debug_enabled': False
+            'debug_enabled': False,
+            'cycletime_percentiles': [0.5, 0.75, 0.85, 0.95]
         }
         return config

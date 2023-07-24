@@ -26,5 +26,9 @@ def print_error(msg) -> None:
     _print(Colors.WARNING + msg + Colors.ENDC)
 
 
+def br() -> None:
+    _print('')
+
+
 def _print(msg) -> None:
     print(msg, flush=True)
