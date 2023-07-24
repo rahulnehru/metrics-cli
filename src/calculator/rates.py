@@ -42,5 +42,6 @@ def show_project_rates(config: Config, jira_client: JiraClient) -> None:
         print_info(f'\tExit rate: {tickets_completed_per_day:.2f}')
         if tickets_raised_per_day > tickets_completed_per_day:
             print_warning(f'\t\tWIP is increasing')
+        br()
     br()
 

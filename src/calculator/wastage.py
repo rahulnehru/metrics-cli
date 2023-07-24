@@ -21,3 +21,4 @@ def show_project_wastages(config: Config, jira_client: JiraClient) -> None:
         wastage_rate = calculate_wastage(completed, wasted)
         print_info(f'\tWastage rate: {wastage_rate:.2f}%')
         br()
+    br()

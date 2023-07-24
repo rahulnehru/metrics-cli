@@ -4,6 +4,8 @@ import datetime
 from src.calculator.cycletime import get_creation_date, get_resolution_date, get_cycle_time, \
     calculate_ave_cycletime, calculate_percentile_cycle_time
 
+from src.config.config import Config
+
 
 class TestCycletime(unittest.TestCase):
     def test_get_creation_date_returns_value_from_ticket(self):
@@ -134,14 +136,14 @@ class TestCycletime(unittest.TestCase):
         ]
         resolved_statuses = ['Done']
 
-        actual = calculate_ave_cycletime(resolved_statuses, True, tickets)
+        config = Config(config_file='tests/resources/test_config.yaml', weeks=3)
+        actual = calculate_ave_cycletime(config, tickets)
         expected = 4
         self.assertEqual(actual, expected)
 
     def test_calculate_average_cycle_time_raises_warning_when_tickets_length_is_zero(self):
-        tickets = []
-        resolved_statuses = ['Done']
-        self.assertRaises(Warning, calculate_ave_cycletime, resolved_statuses, True, tickets)
+        config = Config(config_file='tests/resources/test_config.yaml', weeks=3)
+        self.assertRaises(Warning, calculate_ave_cycletime, config, [])
 
     def test_calculate_percentile_cycle_time_returns_correct_percentile(self):
         tickets = [

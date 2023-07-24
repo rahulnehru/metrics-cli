@@ -30,3 +30,4 @@ def show_project_wip(config: Config, jira_client: JiraClient) -> None:
             print_info(f'\t{status}: {grouped_tickets[status]}')
         print_info(f'\tTickets found: {len(tickets)}')
         br()
+    br()
