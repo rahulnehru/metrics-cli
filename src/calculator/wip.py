@@ -23,11 +23,12 @@ def show_project_wip(config: Config, jira_client: JiraClient) -> None:
     for project in config.projects:
         print_info(f'Getting tickets for {project.team}')
         if config.debug_enabled:
-            print_debug(f'\tJQL: {project.jql}')
+            print_debug(f'JQL: {project.jql}')
         tickets = jira_client.get_inflight_tickets(config, project.jql)
         grouped_tickets = group_tickets_by_status(tickets)
         for status in grouped_tickets:
-            print_info(f'\t{status}: {grouped_tickets[status]}')
-        print_info(f'\tTickets found: {len(tickets)}')
+            if config.debug_enabled:
+                print_debug(f'{status}: {grouped_tickets[status]}')
+        print_info(f'Tickets found: {len(tickets)}')
         br()
     br()

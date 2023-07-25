@@ -15,10 +15,10 @@ def show_project_wastages(config: Config, jira_client: JiraClient) -> None:
     for project in config.projects:
         print_info(f'Getting tickets for {project.team}')
         if config.debug_enabled:
-            print_debug(f'\tJQL: {project.jql}')
+            print_debug(f'JQL: {project.jql}')
         completed = jira_client.get_completed_tickets(config, project.jql)
         wasted = jira_client.get_discarded_tickets(config, project.jql)
         wastage_rate = calculate_wastage(completed, wasted)
-        print_info(f'\tWastage rate: {wastage_rate:.2f}%')
+        print_info(f'Wastage rate: {wastage_rate:.2f}%')
         br()
     br()

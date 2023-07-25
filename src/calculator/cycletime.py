@@ -70,14 +70,14 @@ def show_project_cycletimes(config: Config, jira_client: JiraClient) -> None:
     for project in config.projects:
         print_info(f'Getting tickets for {project.team}')
         if config.debug_enabled:
-            print_debug(f'\tJQL: {project.jql}')
+            print_debug(f'JQL: {project.jql}')
         tickets = jira_client.get_completed_tickets(config, project.jql)
         if config.debug_enabled:
-            print_debug(f'\tTickets found: {len(tickets)}')
-        print_info(f'\tAve cycletime: {calculate_ave_cycletime(config, tickets):.2f} days')
+            print_debug(f'Tickets found: {len(tickets)}')
+        print_info(f'Ave cycletime: {calculate_ave_cycletime(config, tickets):.2f} days')
         resolved_statuses = config.resolved_statuses
         for percentile in config.cycletime_percentiles:
-            print_info(f'\t{percentile} percentile: '
+            print_info(f'{percentile} percentile: '
                         f'{calculate_percentile_cycle_time(resolved_statuses, tickets, percentile):.2f} days')
         br()
     br()

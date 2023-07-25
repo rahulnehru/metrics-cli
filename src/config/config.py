@@ -1,4 +1,5 @@
 import yaml
+from ..printer.log import print_error
 from .project import Project
 
 
@@ -24,16 +25,23 @@ class Config:
     cycletime_percentiles: list[float]
 
     def __init__(self, config_file: str, weeks: int | None) -> None:
-        with open(config_file) as f:
-            config = yaml.load(f, Loader=yaml.FullLoader)
-            self.jira_url = config['jira']['url']
-            self.resolved_statuses = config['jira']['statuses']['resolved']
-            self.backlog_statuses = config['jira']['statuses']['backlog']
-            self.discarded_statuses = config['jira']['statuses']['discarded']
-            self.projects = _map_to_projects(config['projects'])
-            self.debug_enabled = config['debug_enabled']
-            self.weeks = weeks
-            self.cycletime_percentiles = config['cycletime_percentiles']
+        try:
+            with open(config_file) as f:
+                config = yaml.load(f, Loader=yaml.FullLoader)
+                self.jira_url = config['jira']['url']
+                self.resolved_statuses = config['jira']['statuses']['resolved']
+                self.backlog_statuses = config['jira']['statuses']['backlog']
+                self.discarded_statuses = config['jira']['statuses']['discarded']
+                self.projects = _map_to_projects(config['projects'])
+                self.debug_enabled = config['debug_enabled']
+                self.weeks = weeks
+                self.cycletime_percentiles = config['cycletime_percentiles']
+        except FileNotFoundError:
+            print_error(f'Config file {config_file} not found')
+            exit(-1)
+        except KeyError as e:
+            print_error(f'Config file {config_file} is missing key {e}')
+            exit(-1)
 
     def get_resolved_statuses_as_string(self) -> str:
         return _get_statuses_as_string(self.resolved_statuses)

@@ -4,8 +4,6 @@ from src.config.config import Config
 
 
 class TestConfig(unittest.TestCase):
-
-
     config = Config(config_file='tests/resources/test_config.yaml', weeks=3)
 
     def test_init_loads_config_file(self):
@@ -36,3 +34,5 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(actual, '(Closed)')
 
 
+if __name__ == '__main__':
+    unittest.main()

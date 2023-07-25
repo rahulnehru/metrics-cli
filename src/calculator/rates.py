@@ -27,7 +27,7 @@ def show_project_rates(config: Config, jira_client: JiraClient) -> None:
     for project in config.projects:
         print_info(f'Getting tickets for {project.team}')
         if config.debug_enabled:
-            print_debug(f'\tJQL: {project.jql}')
+            print_debug(f'JQL: {project.jql}')
         total_completed = len(jira_client.get_completed_tickets(config, project.jql)) + \
                           len(jira_client.get_discarded_tickets(config, project.jql))
         tickets_raised = len(jira_client.get_raised_tickets(config, project.jql))
@@ -35,13 +35,13 @@ def show_project_rates(config: Config, jira_client: JiraClient) -> None:
         tickets_raised_per_day = calculate_rate(tickets_raised, number_of_working_days)
         tickets_completed_per_day = calculate_rate(total_completed, number_of_working_days)
         if config.debug_enabled:
-            print_debug(f'\tTickets raised: {tickets_raised}')
-            print_debug(f'\tTickets completed or closed: {total_completed}')
-            print_debug(f'\tNumber of working days: {number_of_working_days}')
-        print_info(f'\tEntry rate: {tickets_raised_per_day:.2f}')
-        print_info(f'\tExit rate: {tickets_completed_per_day:.2f}')
+            print_debug(f'Tickets raised: {tickets_raised}')
+            print_debug(f'Tickets completed or closed: {total_completed}')
+            print_debug(f'Number of working days: {number_of_working_days}')
+        print_info(f'Entry rate: {tickets_raised_per_day:.2f}')
+        print_info(f'Exit rate: {tickets_completed_per_day:.2f}')
         if tickets_raised_per_day > tickets_completed_per_day:
-            print_warning(f'\t\tWIP is increasing')
+            print_warning(f'WIP is increasing')
         br()
     br()
 

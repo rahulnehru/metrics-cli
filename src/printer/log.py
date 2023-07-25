@@ -11,15 +11,15 @@ def print_header(msg) -> None:
 
 
 def print_info(msg) -> None:
-    _print(Colors.OKBLUE + msg + Colors.ENDC)
+    _print(Colors.OKBLUE + f'\t{msg}' + Colors.ENDC)
 
 
 def print_debug(msg) -> None:
-    _print(msg)
+    _print(f'\t\t{msg}')
 
 
 def print_warning(msg) -> None:
-    _print(Colors.YELLOW + msg + Colors.ENDC)
+    _print(Colors.YELLOW + f'\t{msg}' + Colors.ENDC)
 
 
 def print_error(msg) -> None:
