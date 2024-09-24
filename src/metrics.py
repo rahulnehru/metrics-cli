@@ -6,7 +6,8 @@ from .calculator.throughput import show_project_throughputs
 from .calculator.wastage import show_project_wastages
 from .calculator.rates import show_project_rates
 from .calculator.wip import show_project_wip
-from .auth.auth_config import append_token_to_auth_server_file, read_token_from_yaml_file
+from .calculator.bugratio import show_project_bug_ratio
+from .auth.auth_config import append_token_to_auth_server_file, read_token_from_yaml_file, AuthServer
 from .printer.log import print_error, print_info
 import click
 import hvac
@@ -40,6 +41,8 @@ def create_default_files() -> None:
     if not os.path.exists(_auth_filename):
         print_error(f"No authentication file found. Creating one in... {_auth_filename}")
         Path(_auth_filename).touch()
+        with open(_auth_filename, 'w') as f:
+            yaml.dump(AuthServer.get_yaml_template(), f)
     if not os.path.exists(_config_filename):
         Path(_config_filename).touch()
         print_error(f"No configuration file found. Creating one in... {_config_filename}")
@@ -115,6 +118,16 @@ def rates(config, weeks) -> None:
     show_project_rates(config, jira_client)
 
 
+@click.command(help="Generate bug ratio for projects")
+@click.argument("config", required=True, type=str, default=_config_filename)
+@click.option("--weeks", default=3, help="Number of weeks to look back")
+def bugratio(config, weeks) -> None:
+    config = Config(config, weeks)
+    auth_token = read_authentication_token(config.jira_url)
+    jira_client = JiraClient(auth_token, config.jira_url)
+    show_project_bug_ratio(config, jira_client)
+
+
 @click.command(help="Generate all reports for projects")
 @click.argument("config", required=True, type=str, default=_config_filename)
 @click.option("--weeks", default=3, help="Number of weeks to look back")
@@ -126,7 +139,7 @@ def all(config, weeks) -> None:
     show_project_throughputs(config, jira_client)
     show_project_wastages(config, jira_client)
     show_project_wip(config, jira_client)
-    rates.show_project_rates(config, jira_client)
+    show_project_rates(config, jira_client)
 
 
 def main() -> None:
@@ -139,6 +152,7 @@ def main() -> None:
     cli.add_command(wastage)
     cli.add_command(rates)
     cli.add_command(all)
+    cli.add_command(bugratio)
     cli()
 
 

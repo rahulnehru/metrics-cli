@@ -39,3 +39,10 @@ class AuthServer:
     def __init__(self, jira_url: str, token: str) -> None:
         self.jira_url = jira_url
         self.token = token
+
+    @staticmethod
+    def get_yaml_template():
+        return {
+            'jira_url': '',
+            'token': ''
+        }

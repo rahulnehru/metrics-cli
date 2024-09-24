@@ -32,7 +32,9 @@ metrics cycletime <JIRA_USERNAME> <JIRA_PASSWORD> config.yaml
 ### Running using Docker
 You can install the tool using a Docker container by running `docker build -t metrics .`.
 
-You can then run the tool by running `docker run -v $(pwd)/config.yaml:/config.yaml metrics` from the command line.
+You can then run the tool by running `docker run -v $(pwd):/root/.jira_metrics metrics <CMD>` from the command line.
+
+
 ### Running locally
 If using OSX, you can run the `install.sh` script locally on your machine. This will install the tool into your local `bin` directory.
 This tool requires Python 3.10 or higher to be installed on your machine.
@@ -96,4 +98,7 @@ The exit/departure rate is defined as the number of items being completed by the
 The generated report analyses the entry and exit rates over the specified time period. This metric is useful to understand whether the Work in Progress has grown over the specified time period (i.e. the team is doing more work in parallel than at the start of the period).
 
 ### Wastage
-The wastage report is used to analyse the ratio of how many tickets are being completed rather than rejected or discareded during the specified period. 
+The wastage report is used to analyse the ratio of how many tickets are being completed rather than rejected or discarded during the specified period. 
+
+### Bug ratio
+This report identifies the number of tickets raised which are bugs com

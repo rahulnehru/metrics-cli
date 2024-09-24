@@ -2,8 +2,9 @@ import requests
 from requests import Response
 from requests.auth import HTTPBasicAuth
 from ..config.config import Config
-from ..printer.log import print_error
+from ..printer.log import print_error, print_warning
 import multiprocessing
+import resource
 
 
 def wrap_connection_exception(f, host):
@@ -25,11 +26,21 @@ class JiraClient:
     auth_token: str
     base_url: str
     session: requests.Session
+    page_size: int
 
     def __init__(self, auth_token: str, base_url: str) -> None:
         self.auth_token = auth_token
         self.base_url = base_url
         self.session = requests.Session()
+        self.page_size = 1
+
+    def __configure_page_size(self, number_of_tickets: int) -> None:
+        files_available = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
+        min_page_size = number_of_tickets // files_available
+        if min_page_size > self.page_size:
+            new_page_size = int(number_of_tickets / files_available) + 1
+            print_warning(f"Will need to optimise number of tickets in a page for performance reasons from {self.page_size} to {new_page_size}")
+            self.page_size = new_page_size
 
     @staticmethod
     def auth(base_url, username, password) -> dict:
@@ -45,7 +56,7 @@ class JiraClient:
         jira_data = {
             "jql": jql,
             "startAt": start_at,
-            "maxResults": 50,
+            "maxResults": self.page_size,
             "expand": "changelog"
         }
         header = {'Authorization': f'Bearer {self.auth_token}'}
@@ -58,9 +69,10 @@ class JiraClient:
     def _get_tickets(self, jql: str) -> list[dict]:
         page = 0
         total_matches = self._run_jira_query(jql, page)['total']
-        pages = total_matches // 50
+        self.__configure_page_size(total_matches)
+        pages = total_matches // self.page_size
         with multiprocessing.Pool(pages + 1) as pool:
-            tickets = pool.starmap(self._run_jira_query, [(jql, page * 50) for page in range(0, pages + 1)])
+            tickets = pool.starmap(self._run_jira_query, [(jql, page * self.page_size) for page in range(0, pages + 1)])
         tickets = [ticket for page in tickets for ticket in page['issues']]
         pool.close()
         return tickets

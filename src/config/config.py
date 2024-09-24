@@ -23,6 +23,7 @@ class Config:
     weeks: int
     debug_enabled: bool
     cycletime_percentiles: list[float]
+    bug_types: list[str]
 
     def __init__(self, config_file: str, weeks: int | None) -> None:
         try:
@@ -36,6 +37,7 @@ class Config:
                 self.debug_enabled = config['debug_enabled']
                 self.weeks = weeks
                 self.cycletime_percentiles = config['cycletime_percentiles']
+                self.bug_types = config['bug_types']
         except FileNotFoundError:
             print_error(f'Config file {config_file} not found')
             exit(-1)
@@ -60,10 +62,11 @@ class Config:
                f'Projects: {self.projects}\n' \
                f'Weeks: {self.weeks}\n' \
                f'Debug enabled: {self.debug_enabled}\n' \
-               f'Cycletime percentiles: {self.cycletime_percentiles}'
+               f'Cycletime percentiles: {self.cycletime_percentiles}' \
+               f'Bug types: {self.bug_types}'
 
     @staticmethod
-    def get_yaml_template() -> str:
+    def get_yaml_template() :
         config = {
             'jira': {
                 'url': 'https://jira.example.com',
@@ -73,6 +76,7 @@ class Config:
                     'discarded': ['Discarded']
                 }
             },
+            'bug_types': [],
             'projects': [
                 {
                     'team': 'Team 1',
