@@ -101,4 +101,4 @@ The generated report analyses the entry and exit rates over the specified time p
 The wastage report is used to analyse the ratio of how many tickets are being completed rather than rejected or discarded during the specified period. 
 
 ### Bug ratio
-This report identifies the number of tickets raised which are bugs com
+This report identifies the ratio of new bugs created in the period which are a defect/bug type (specified in the configuration file).
